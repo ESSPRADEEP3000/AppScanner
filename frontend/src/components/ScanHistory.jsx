@@ -10,7 +10,7 @@ const ScanHistory = () => {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await axios.get('http://localhost:1121/api/history');
+        const response = await axios.get('https://appscanner.onrender.com/api/history');
         setHistory(response.data);
         setLoading(false);
       } catch (err) {
@@ -66,7 +66,7 @@ const ScanHistory = () => {
   const generatePDF = async (scan) => {
     try {
       const response = await axios.post(
-        'http://localhost:1121/api/generate-pdf',
+        'https://appscanner.onrender.com/api/generate-pdf',
         {
           url: scan.url,
           vulnerabilities: scan.vulnerabilities,

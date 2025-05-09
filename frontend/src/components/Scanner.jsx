@@ -351,7 +351,7 @@ const Scanner = () => {
         date: result.scannedAt
       };
       const response = await axios.post(
-        'http://localhost:1121/api/generate-pdf',
+        'https://appscanner.onrender.com/api/generate-pdf',
         payload,
         { responseType: 'blob' }
       );
