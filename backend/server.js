@@ -838,7 +838,7 @@ const app = express();
 // CORS — restrict origins as needed
 app.use(cors({  }));
 // Body parser with size limit
-app.use(bodyParser.json({ limit: '100kb' }));
+app.use(bodyParser.json({ limit: '100000kb' }));
 // Security headers
 app.use(helmet());
 // HTTP request logging
