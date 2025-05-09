@@ -331,7 +331,7 @@ const Scanner = () => {
     setLoading(true);
     setResult(null);
     try {
-      const response = await axios.post('http://localhost:1121/api/scan', { url });
+      const response = await axios.post('https://appscanner.onrender.com/api/scan', { url });
       // include a timestamp so our PDF knows when this scan ran
       setResult({ ...response.data, scannedAt: new Date().toISOString() });
     } catch (error) {
