@@ -317,19 +317,147 @@
 // export default Scanner;
 
 
+// import { useState } from 'react';
+// import axios from 'axios';
+// import { FiLoader, FiDownload } from 'react-icons/fi';
+
+// const Scanner = () => {
+//   const [url, setUrl] = useState('');
+//   const [result, setResult] = useState(null);
+//   const [loading, setLoading] = useState(false);
+//   const [pdfLoading, setPdfLoading] = useState(false);
+
+//   const handleScan = async () => {
+//     setLoading(true);
+//     setResult(null);
+//     try {
+//       const response = await axios.post('http://localhost:1121/api/scan', { url });
+//       // include a timestamp so our PDF knows when this scan ran
+//       setResult({ ...response.data, scannedAt: new Date().toISOString() });
+//     } catch (error) {
+//       setResult({ error: 'Failed to scan the URL. Please try again.' });
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const downloadReport = async () => {
+//     if (!result || result.error) return;
+//     setPdfLoading(true);
+//     try {
+//       const payload = {
+//         url,
+//         vulnerabilities: result.vulnerabilities,
+//         date: result.scannedAt
+//       };
+//       const response = await axios.post(
+//         'http://localhost:1121/api/generate-pdf',
+//         payload,
+//         { responseType: 'blob' }
+//       );
+//       const blob = new Blob([response.data], { type: 'application/pdf' });
+//       const link = document.createElement('a');
+//       link.href = URL.createObjectURL(blob);
+//       link.download = `scan-report-${url.replace(/[^a-z0-9]/gi, '_')}.pdf`;
+//       link.click();
+//     } catch (err) {
+//       console.error('PDF download failed', err);
+//       alert('Could not download report. Try again.');
+//     } finally {
+//       setPdfLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="bg-teal-950 text-white p-8 rounded-2xl shadow-xl max-w-3xl mx-auto mt-12 hover:shadow-2xl transition-transform transform hover:scale-[1.01]">
+//       <h1 className="text-4xl font-bold mb-6 text-center">🔍 URL Security Scanner</h1>
+      
+//       <div className="flex flex-col sm:flex-row items-center gap-4 mb-8">
+//         <input
+//           type="text"
+//           placeholder="https://example.com"
+//           className="w-full p-3 rounded-lg border text-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+//           value={url}
+//           onChange={(e) => setUrl(e.target.value)}
+//         />
+//         <button
+//           onClick={handleScan}
+//           disabled={loading || !url.trim()}
+//           className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition disabled:opacity-50"
+//         >
+//           {loading ? <FiLoader className="animate-spin" /> : 'Scan'}
+//         </button>
+//       </div>
+
+//       {result && (
+//         <div className="bg-white text-black p-6 rounded-xl shadow-md space-y-6 animate-fade-in-down">
+//           {result.error ? (
+//             <div className="bg-red-50 border border-red-300 rounded-lg p-5 space-y-3">
+//               <h2 className="text-red-600 text-2xl font-semibold flex items-center gap-2">
+//                 ❌ Scan Failed
+//               </h2>
+//               <p className="text-red-800">{result.error}</p>
+//             </div>
+//           ) : (
+//             <div className="space-y-4">
+//               <div className="flex items-center gap-2">
+//                 <span className="text-green-700 text-2xl font-semibold">✅ {result.message}</span>
+//                 <button
+//                   onClick={downloadReport}
+//                   disabled={pdfLoading}
+//                   className="ml-auto flex items-center gap-1 bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded-lg transition disabled:opacity-50"
+//                 >
+//                   {pdfLoading
+//                     ? <FiLoader className="animate-spin" />
+//                     : <>Download Report <FiDownload /></>}
+//                 </button>
+//               </div>
+
+//               {result.vulnerabilities.length === 0 ? (
+//                 <p className="text-green-600 text-lg">No vulnerabilities were detected. 🎉</p>
+//               ) : (
+//                 <div className="space-y-3">
+//                   <h3 className="text-red-600 text-xl font-bold">Detected Vulnerabilities:</h3>
+//                   <ul className="grid gap-3">
+//                     {result.vulnerabilities.map((vuln, idx) => (
+//                       <li
+//                         key={idx}
+//                         className="bg-red-50 border border-red-200 p-4 rounded-md text-red-800 shadow-sm flex items-start gap-3"
+//                       >
+//                         <span className="font-bold">#{idx + 1}</span>
+//                         <span>{vuln}</span>
+//                       </li>
+//                     ))}
+//                   </ul>
+//                 </div>
+//               )}
+//             </div>
+//           )}
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default Scanner;
+
+
+// Scanner.jsx (updated)
 import { useState } from 'react';
 import axios from 'axios';
 import { FiLoader, FiDownload } from 'react-icons/fi';
 
-const Scanner = () => {
+export default function Scanner() {
   const [url, setUrl] = useState('');
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
+  const [showXss, setShowXss] = useState(false);
 
   const handleScan = async () => {
     setLoading(true);
     setResult(null);
+    setShowXss(false);
     try {
       const response = await axios.post('https://appscanner.onrender.com/api/scan', { url });
       // include a timestamp so our PDF knows when this scan ran
@@ -348,6 +476,7 @@ const Scanner = () => {
       const payload = {
         url,
         vulnerabilities: result.vulnerabilities,
+        xssResults: result.xssResults,
         date: result.scannedAt
       };
       const response = await axios.post(
@@ -360,8 +489,7 @@ const Scanner = () => {
       link.href = URL.createObjectURL(blob);
       link.download = `scan-report-${url.replace(/[^a-z0-9]/gi, '_')}.pdf`;
       link.click();
-    } catch (err) {
-      console.error('PDF download failed', err);
+    } catch {
       alert('Could not download report. Try again.');
     } finally {
       setPdfLoading(false);
@@ -369,74 +497,89 @@ const Scanner = () => {
   };
 
   return (
-    <div className="bg-teal-950 text-white p-8 rounded-2xl shadow-xl max-w-3xl mx-auto mt-12 hover:shadow-2xl transition-transform transform hover:scale-[1.01]">
+    <div className="bg-teal-950 text-white p-8 rounded-2xl shadow-xl max-w-3xl mx-auto mt-12">
       <h1 className="text-4xl font-bold mb-6 text-center">🔍 URL Security Scanner</h1>
-      
-      <div className="flex flex-col sm:flex-row items-center gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row gap-4 mb-8">
         <input
           type="text"
           placeholder="https://example.com"
-          className="w-full p-3 rounded-lg border text-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+          className="w-full p-3 rounded-lg text-black border-gray-300 focus:ring-teal-500"
           value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          onChange={e => setUrl(e.target.value)}
         />
         <button
           onClick={handleScan}
           disabled={loading || !url.trim()}
-          className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition disabled:opacity-50"
+          className="bg-green-500 hover:bg-green-600 px-6 py-3 rounded-lg flex items-center gap-2 disabled:opacity-50"
         >
           {loading ? <FiLoader className="animate-spin" /> : 'Scan'}
         </button>
       </div>
 
       {result && (
-        <div className="bg-white text-black p-6 rounded-xl shadow-md space-y-6 animate-fade-in-down">
+        <div className="bg-white text-black p-6 rounded-xl shadow-md">
           {result.error ? (
-            <div className="bg-red-50 border border-red-300 rounded-lg p-5 space-y-3">
-              <h2 className="text-red-600 text-2xl font-semibold flex items-center gap-2">
-                ❌ Scan Failed
-              </h2>
-              <p className="text-red-800">{result.error}</p>
+            <div className="text-red-800">
+              <h2 className="text-2xl font-semibold text-red-600">❌ Scan Failed</h2>
+              <p>{result.error}</p>
             </div>
           ) : (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
+            <>
+              <div className="flex items-center mb-4">
                 <span className="text-green-700 text-2xl font-semibold">✅ {result.message}</span>
                 <button
                   onClick={downloadReport}
                   disabled={pdfLoading}
-                  className="ml-auto flex items-center gap-1 bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded-lg transition disabled:opacity-50"
+                  className="ml-auto bg-yellow-400 hover:bg-yellow-500 flex items-center px-4 py-2 rounded-lg disabled:opacity-50"
                 >
-                  {pdfLoading
-                    ? <FiLoader className="animate-spin" />
-                    : <>Download Report <FiDownload /></>}
+                  {pdfLoading ? <FiLoader className="animate-spin" /> : <>Download Report <FiDownload/></>}
                 </button>
               </div>
 
               {result.vulnerabilities.length === 0 ? (
                 <p className="text-green-600 text-lg">No vulnerabilities were detected. 🎉</p>
               ) : (
-                <div className="space-y-3">
-                  <h3 className="text-red-600 text-xl font-bold">Detected Vulnerabilities:</h3>
-                  <ul className="grid gap-3">
-                    {result.vulnerabilities.map((vuln, idx) => (
-                      <li
-                        key={idx}
-                        className="bg-red-50 border border-red-200 p-4 rounded-md text-red-800 shadow-sm flex items-start gap-3"
-                      >
-                        <span className="font-bold">#{idx + 1}</span>
-                        <span>{vuln}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <ul className="space-y-2 mb-4">
+                  {result.vulnerabilities.map((v, i) => (
+                    <li key={i} className="text-red-700">
+                      #{i + 1} {v}
+                    </li>
+                  ))}
+                </ul>
               )}
-            </div>
+
+              {/* XSS Test Results Toggle */}
+              <button
+                onClick={() => setShowXss(!showXss)}
+                className="text-sm text-blue-600 underline mb-2"
+              >
+                {showXss ? 'Hide' : 'Show'} XSS Test Results
+              </button>
+
+              {showXss && (
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr>
+                      <th className="border-b px-2 py-1">Payload</th>
+                      <th className="border-b px-2 py-1">Detected</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {result.xssResults.map((r, i) => (
+                      <tr key={i}>
+                        <td className="border px-2 py-1 font-mono">{r.payload}</td>
+                        <td className="border px-2 py-1">
+                          {r.detected ? '✅' : '❌'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </>
           )}
         </div>
       )}
     </div>
   );
-};
-
-export default Scanner;
+}

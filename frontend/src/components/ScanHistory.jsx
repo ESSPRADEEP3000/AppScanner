@@ -22,45 +22,7 @@ const ScanHistory = () => {
     fetchHistory();
   }, []);
 
-  // const generatePDF = (scan) => {
-  //   const pdf = new jsPDF();
-  //   pdf.setFontSize(22);
-  //   pdf.text('Scan Report', 10, 10);
-    
-  //   // Scan details
-  //   pdf.setFontSize(14);
-  //   pdf.text(`URL: ${scan.url}`, 10, 30);
-  //   pdf.text(`Date: ${new Date(scan.date).toLocaleDateString()}`, 10, 40);
-    
-  //   // Vulnerabilities section
-  //   pdf.text('Vulnerabilities:', 10, 50);
-    
-  //   if (scan.vulnerabilities.length === 0) {
-  //     pdf.text('Secure', 10, 60);
-  //   } else {
-  //     scan.vulnerabilities.forEach((vulnerability, index) => {
-  //       const yPosition = 70 + (index * 40);  // Adjust vertical space for each vulnerability
-
-  //       // Vulnerability Name
-  //       pdf.setFontSize(14);
-  //       pdf.text(`- ${vulnerability}`, 10, yPosition);
-
-  //       // Add root cause, impact, and mitigation strategies for each vulnerability
-  //       const rootCause = getRootCause(vulnerability);
-  //       const impact = getImpact(vulnerability);
-  //       const mitigation = getMitigation(vulnerability);
-
-  //       pdf.setFontSize(12);
-  //       pdf.text(`Root Cause: ${rootCause}`, 10, yPosition + 10);
-  //       pdf.text(`Impact if Unresolved: ${impact}`, 10, yPosition + 20);
-  //       pdf.text(`Mitigation: ${mitigation}`, 10, yPosition + 30);
-  //     });
-  //   }
-
-  //   // Save PDF with URL as filename
-  //   pdf.save(`scan-report-${scan.url.replace(/[^a-z0-9]/gi, '_')}.pdf`);
-  // };
-
+  
   // Root Causes, Impacts, and Mitigation Strategies
   
   const generatePDF = async (scan) => {
