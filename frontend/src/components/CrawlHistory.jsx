@@ -64,7 +64,7 @@ export default function CrawlHistory() {
   const [openPageIdx, setOpenPageIdx] = useState({}); // { [runIdx]: pageIdx }
 
   useEffect(() => {
-    axios.get('https://appscanner.onrender.com/api/crawl-history')
+    axios.get('https://appscanner.onrender.com/crawl-history')
       .then(resp => setHistory(resp.data))
       .catch(console.error)
       .finally(() => setLoading(false));
