@@ -28,7 +28,7 @@ const ScanHistory = () => {
   const generatePDF = async (scan) => {
     try {
       const response = await axios.post(
-        'https://appscanner.onrender.com/api/generate-pdf',
+        'https://appscanner.onrender.com/generate-pdf',
         {
           url: scan.url,
           vulnerabilities: scan.vulnerabilities,
