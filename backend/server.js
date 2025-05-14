@@ -1179,7 +1179,7 @@ const puppeteer     = require('puppeteer');
 const app = express();
 
 /** ── GLOBAL MIDDLEWARE ───────────────────────────────────────────── */
-app.use(cors({ origin: 'https://app-scanner1.vercel.app/' }));
+app.use(cors({ origin: 'https://app-scanner1.vercel.app' }));
 app.use(bodyParser.json({ limit: '1000kb' }));
 // CORS — restrict origins as needed
 app.use(cors({  }));
